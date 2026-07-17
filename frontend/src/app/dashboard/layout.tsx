@@ -9,7 +9,7 @@ const NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboardIcon },
   { href: "/dashboard/upload", label: "Upload BOQ", icon: UploadIcon },
   { href: "/dashboard/projects", label: "Projects", icon: FolderIcon },
-  { href: "/search", label: "DSR Search", icon: SearchIcon },
+  { href: "/dashboard/database", label: "DSR Search", icon: SearchIcon },
 ];
 
 export default function DashboardLayout({

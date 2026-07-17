@@ -93,7 +93,7 @@ export default function DashboardPage() {
         </Link>
 
         <Link
-          href="/search"
+          href="/dashboard/database"
           className="group relative flex items-center gap-4 rounded-xl border border-dashed border-border bg-card p-6 hover:border-primary/50 hover:shadow-md transition-all duration-200"
         >
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-2xl">
