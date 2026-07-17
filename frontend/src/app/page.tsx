@@ -66,7 +66,7 @@ export default function LandingPage() {
               Upload BOQ — Free
             </Link>
             <Link
-              href="/search"
+              href="/dashboard/database"
               className="inline-flex h-12 items-center rounded-xl border border-border bg-card px-8 text-sm font-medium hover:bg-accent transition-colors"
             >
               Browse DSR Database
