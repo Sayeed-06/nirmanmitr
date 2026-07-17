@@ -1,0 +1,20 @@
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  // Proxy API calls to FastAPI backend in development
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*",
+        destination: `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1"}/:path*`,
+      },
+    ];
+  },
+  images: {
+    remotePatterns: [
+      { protocol: "https", hostname: "**.supabase.co" },
+    ],
+  },
+};
+
+export default nextConfig;

@@ -1,0 +1,146 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── NirmanMitr Design System ─── */
+/* Inspired by Linear, Vercel, Notion, Stripe */
+
+@layer base {
+  :root {
+    /* Light Theme */
+    --background: 0 0% 98%;
+    --foreground: 0 0% 9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 9%;
+    --primary: 221 83% 53%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+    --accent: 0 0% 96%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 221 83% 53%;
+    --radius: 0.5rem;
+    --success: 142 76% 36%;
+    --warning: 38 92% 50%;
+  }
+
+  .dark {
+    --background: 0 0% 4%;
+    --foreground: 0 0% 93%;
+    --card: 0 0% 7%;
+    --card-foreground: 0 0% 93%;
+    --popover: 0 0% 7%;
+    --popover-foreground: 0 0% 93%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 0 0% 93%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 64%;
+    --accent: 0 0% 12%;
+    --accent-foreground: 0 0% 93%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 15%;
+    --input: 0 0% 15%;
+    --ring: 217 91% 60%;
+    --success: 142 71% 45%;
+    --warning: 38 92% 50%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+/* ─── Typography ─── */
+@layer base {
+  h1 {
+    @apply text-3xl font-semibold tracking-tight;
+  }
+  h2 {
+    @apply text-2xl font-semibold tracking-tight;
+  }
+  h3 {
+    @apply text-xl font-semibold tracking-tight;
+  }
+  h4 {
+    @apply text-lg font-medium;
+  }
+}
+
+/* ─── Custom Scrollbar ─── */
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted)) transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--muted-foreground) / 0.3);
+    border-radius: 3px;
+  }
+}
+
+/* ─── Knowledge Card Animations ─── */
+@keyframes drawer-slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes drawer-slide-out {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.drawer-enter {
+  animation: drawer-slide-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.drawer-exit {
+  animation: drawer-slide-out 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ─── Table Row Highlights ─── */
+.row-matched {
+  @apply bg-emerald-50/50 dark:bg-emerald-950/20;
+}
+
+.row-unmatched {
+  @apply bg-amber-50/50 dark:bg-amber-950/20;
+}
+
+.row-matched:hover,
+.row-unmatched:hover {
+  @apply bg-accent;
+}

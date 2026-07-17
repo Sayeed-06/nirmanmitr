@@ -1,0 +1,1 @@
+"""NirmanMitr Backend Application."""

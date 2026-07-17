@@ -1,0 +1,40 @@
+# ─── Root ───
+node_modules/
+.env
+.env.local
+.env.*.local
+*.pyc
+__pycache__/
+.DS_Store
+*.egg-info/
+dist/
+build/
+.cache/
+
+# ─── Backend ───
+backend/.venv/
+backend/*.egg-info/
+backend/.mypy_cache/
+backend/.ruff_cache/
+backend/.pytest_cache/
+backend/uploads/
+backend/htmlcov/
+backend/.coverage
+
+# ─── Frontend ───
+frontend/.next/
+frontend/out/
+frontend/node_modules/
+
+# ─── Docker ───
+pgdata/
+
+# ─── IDE ───
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ─── DSR Source PDFs (large files) ───
+*.pdf
+!docs/*.pdf
