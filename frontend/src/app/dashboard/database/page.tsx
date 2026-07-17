@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { api } from "@/lib/api-client";
 import { DSRItem } from "@/types";
 import { KnowledgeCard } from "@/components/knowledge-card";
 
-export default function DatabasePage() {
+function DatabasePageContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -137,5 +137,13 @@ export default function DatabasePage() {
         onOpenChange={setCardOpen}
       />
     </div>
+  );
+}
+
+export default function DatabasePage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center p-12 text-muted-foreground">Loading...</div>}>
+      <DatabasePageContent />
+    </Suspense>
   );
 }
