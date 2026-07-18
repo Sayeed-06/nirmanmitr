@@ -50,6 +50,7 @@ def create_app() -> FastAPI:
     application.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins,
+        allow_origin_regex=r"https://.*\.vercel\.app",
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
@@ -59,7 +60,7 @@ def create_app() -> FastAPI:
     if settings.is_production:
         application.add_middleware(
             TrustedHostMiddleware,
-            allowed_hosts=settings.cors_origins,
+            allowed_hosts=["*"], # Allow Render to handle routing
         )
 
     # ─── Routes ───
