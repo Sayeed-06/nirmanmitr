@@ -78,16 +78,19 @@ export default function UploadPage() {
     }, 500);
 
     try {
-      const response = await api.post("/upload/", formData, {
+      const response = await api.post("/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
       
+      const projectId = response.data.project_id;
+      
+      // Trigger parsing
+      await api.post(`/parse/${projectId}`);
+
       clearInterval(progressInterval);
       setProgress(100);
-      
-      const projectId = response.data.project_id;
       
       // Delay slightly for UX
       setTimeout(() => {

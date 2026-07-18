@@ -24,9 +24,9 @@ export default function ProjectDetailPage() {
       setLoading(true);
       try {
         const isMatched = filter === "all" ? undefined : filter === "matched";
-        // Fetch up to 500 items for demo (in prod, use pagination)
+        // Fetch up to 50 items for demo (in prod, use pagination)
         const response = await api.get(`/project/${projectId}`, {
-          params: { page: 1, page_size: 500, matched_only: isMatched }
+          params: { page: 1, page_size: 50, matched_only: isMatched }
         });
         setData(response.data);
       } catch (err) {
