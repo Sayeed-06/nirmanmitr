@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { href: "/dashboard/upload", label: "Upload BOQ", icon: UploadIcon },
   { href: "/dashboard/projects", label: "Projects", icon: FolderIcon },
   { href: "/dashboard/database", label: "DSR Search", icon: SearchIcon },
+  { href: "/dashboard/admin", label: "Admin Data", icon: FolderIcon },
 ];
 
 export default function DashboardLayout({

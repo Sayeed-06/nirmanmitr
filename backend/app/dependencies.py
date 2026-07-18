@@ -81,11 +81,13 @@ async def get_current_user(request: Request) -> dict:
 async def require_admin(
     current_user: Annotated[dict, Depends(get_current_user)],
 ) -> dict:
-    """Require admin role for access."""
-    if current_user.get("role") != "admin":
+    """Require admin role for access.
+    NOTE: Relaxed for MVP so any authenticated user can add items to DB.
+    """
+    if not current_user.get("user_id"):
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Admin access required",
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication required",
         )
     return current_user
 
