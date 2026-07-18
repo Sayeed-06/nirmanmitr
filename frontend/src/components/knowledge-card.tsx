@@ -27,7 +27,7 @@ export function KnowledgeCard({
   open,
   onOpenChange,
 }: KnowledgeCardProps) {
-  const [data, setData] = useState<DSRItem | (DSRItem & { is_ai_generated?: boolean }) | null>(null);
+  const [data, setData] = useState<DSRItem | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 

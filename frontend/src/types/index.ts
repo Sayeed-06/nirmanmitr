@@ -20,6 +20,7 @@ export interface DSRItem {
   search_keywords: string[];
   created_at: string;
   updated_at: string;
+  is_ai_generated?: boolean;
 }
 
 export interface DSRItemSummary {
