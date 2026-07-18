@@ -34,15 +34,11 @@ DSR_PATTERNS: list[re.Pattern] = [
         r"(?:Sr|S)\.?\s*No\.?\s*(\d{1,2}\.\d{1,3}(?:\.\d{1,3}){0,3})",
         re.IGNORECASE,
     ),
-    # Standalone item number at start of text: "5.33" or "5.33.1.2"
-    # Must have digit.digit format to avoid false positives
-    re.compile(
-        r"^(\d{1,2}\.\d{1,3}(?:\.\d{1,3}){0,3})\b",
-    ),
-    # Item number anywhere in text (less specific, may have more false positives)
-    re.compile(
-        r"\b(\d{1,2}\.\d{1,3}(?:\.\d{1,3}){0,3})\b",
-    ),
+    # Standalone item number at start of text is TOO aggressive.
+    # The user explicitly wants it to only match if it says "refer cpwd dsr item_code"
+    # So we remove the aggressive standalone matching patterns.
+    # re.compile(r"^(\d{1,2}\.\d{1,3}(?:\.\d{1,3}){0,3})\b"),
+    # re.compile(r"\b(\d{1,2}\.\d{1,3}(?:\.\d{1,3}){0,3})\b"),
 ]
 
 # Numbers that are clearly NOT DSR item numbers

@@ -17,7 +17,7 @@ export default function ProjectDetailPage() {
   
   // Knowledge Card state
   const [cardOpen, setCardOpen] = useState(false);
-  const [activeItem, setActiveItem] = useState<string | null>(null);
+  const [activeItem, setActiveItem] = useState<ParsedItem | null>(null);
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -39,10 +39,8 @@ export default function ProjectDetailPage() {
   }, [projectId, filter]);
 
   const handleRowClick = (item: ParsedItem) => {
-    if (item.dsr_item_number) {
-      setActiveItem(item.dsr_item_number);
-      setCardOpen(true);
-    }
+    setActiveItem(item);
+    setCardOpen(true);
   };
 
   if (loading && !data) {
@@ -154,12 +152,7 @@ export default function ProjectDetailPage() {
                   <tr
                     key={item.id}
                     onClick={() => handleRowClick(item)}
-                    className={cn(
-                      "transition-colors",
-                      item.is_matched
-                        ? "cursor-pointer hover:bg-accent/50"
-                        : "hover:bg-muted/30"
-                    )}
+                    className="transition-colors cursor-pointer hover:bg-accent/50"
                   >
                     <td className="px-4 py-3 align-top text-muted-foreground">
                       {idx + 1}
@@ -202,11 +195,13 @@ export default function ProjectDetailPage() {
       </div>
 
       {/* ─── Knowledge Card Drawer ─── */}
-      <KnowledgeCard
-        itemNumber={activeItem}
-        open={cardOpen}
-        onOpenChange={setCardOpen}
-      />
+      {activeItem && (
+        <KnowledgeCard
+          item={activeItem}
+          open={cardOpen}
+          onOpenChange={setCardOpen}
+        />
+      )}
     </div>
   );
 }

@@ -14,11 +14,7 @@ import re
 import asyncio
 from pathlib import Path
 
-try:
-    import pdfplumber
-except ImportError:
-    print("Error: pdfplumber is not installed. Please run: pip install pdfplumber")
-    sys.exit(1)
+import pdfplumber
 
 # Add parent directory to path for app imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -45,55 +41,57 @@ def parse_pdf(pdf_path: str):
         print(f"Total pages: {total_pages}")
         
         current_item = None
+        current_desc_lines = []
         
-        # We start from page 15 usually, to skip table of contents
-        # You can adjust this range based on the actual PDF structure.
         for i in range(0, total_pages):
             page = pdf.pages[i]
-            tables = page.extract_tables()
-            
-            for table in tables:
-                for row in table:
-                    # Clean the row
-                    cleaned_row = [clean_text(cell) if cell else "" for cell in row]
+            text = page.extract_text()
+            if not text:
+                continue
+                
+            for line in text.split('\n'):
+                line = clean_text(line)
+                if not line:
+                    continue
+                
+                # Match "1.1", "2.14.1", etc. followed by space and text
+                match = re.match(r"^(\d+\.\d+(?:\.\d+)*)\s+(.*)", line)
+                
+                if match:
+                    # Save previous item
+                    if current_item:
+                        current_item["official_description"] = " ".join(current_desc_lines)
+                        items.append(current_item)
                     
-                    if len(cleaned_row) < 3:
-                        continue
-                        
-                    # Usually: [Item No, Description, Unit, Rate]
-                    col_0 = cleaned_row[0]
+                    item_no = match.group(1)
+                    rest_of_line = match.group(2)
                     
-                    if ITEM_REGEX.match(col_0):
-                        # If we have an existing item, save it
-                        if current_item and current_item["item_number"]:
-                            items.append(current_item)
-                            
-                        # Start a new item
-                        current_item = {
-                            "item_number": col_0,
-                            "chapter": f"Chapter {col_0.split('.')[0]}", # Estimate chapter from first digit
-                            "official_description": cleaned_row[1],
-                            "measurement_unit": cleaned_row[2] if len(cleaned_row) > 2 else "",
-                            "simple_title": "",
-                            "summary": "",
-                            "purpose": "",
-                            "where_used": [],
-                            "materials": [],
-                            "execution_steps": [],
-                            "common_mistakes": [],
-                            "specification_reference": "",
-                            "search_keywords": []
-                        }
-                    elif current_item and col_0 == "" and cleaned_row[1] != "":
-                        # Continuation of the previous item's description
-                        current_item["official_description"] += " " + cleaned_row[1]
-                        
-                        # Sometimes unit is on the next line
-                        if not current_item["measurement_unit"] and len(cleaned_row) > 2 and cleaned_row[2]:
-                            current_item["measurement_unit"] = cleaned_row[2]
+                    current_item = {
+                        "item_number": item_no,
+                        "chapter": f"Chapter {item_no.split('.')[0]}",
+                        "official_description": "", # Will be joined at the end
+                        "measurement_unit": "", 
+                        "simple_title": "",
+                        "summary": "",
+                        "purpose": "",
+                        "where_used": [],
+                        "materials": [],
+                        "execution_steps": [],
+                        "common_mistakes": [],
+                        "specification_reference": "",
+                        "search_keywords": []
+                    }
+                    current_desc_lines = [rest_of_line]
+                
+                elif current_item:
+                    # Not a new item, so it's a continuation of the current item's description
+                    # It might include the Unit and Rate at the end, but we will just bundle it all in description
+                    # so that it is fully searchable.
+                    current_desc_lines.append(line)
 
         # Append the very last item
-        if current_item and current_item["item_number"]:
+        if current_item:
+            current_item["official_description"] = " ".join(current_desc_lines)
             items.append(current_item)
 
     print(f"Successfully extracted {len(items)} items from the PDF.")

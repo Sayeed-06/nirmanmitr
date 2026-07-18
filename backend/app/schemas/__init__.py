@@ -8,6 +8,22 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 
 
+class AIExplainRequest(BaseModel):
+    """Request schema for explaining an unmatched BOQ item."""
+    description: str = Field(..., description="The raw BOQ item description")
+    item_number: str | None = Field(None, description="The BOQ item number if available")
+
+class AIExplainResponse(BaseModel):
+    """Response schema for an AI explanation of an unmatched item (mirrors DSRItemBase)."""
+    official_description: str
+    simple_title: str | None
+    summary: str | None
+    materials: list[dict] | None = Field(default_factory=list)
+    execution_steps: list[str] | None = Field(default_factory=list)
+    common_mistakes: list[str] | None = Field(default_factory=list)
+    where_used: list[str] | None = Field(default_factory=list)
+    is_ai_generated: bool = True
+
 class DSRItemBase(BaseModel):
     """Base schema with shared DSR item fields."""
 

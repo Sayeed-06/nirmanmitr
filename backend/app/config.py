@@ -24,8 +24,11 @@ class Settings(BaseSettings):
         "postgresql+asyncpg://nirmanmitr:changeme_in_production@localhost:5432/nirmanmitr"
     )
 
-    # ─── Clerk Auth ───
+    # Clerk Authentication
     clerk_secret_key: str = ""
+    
+    # Gemini AI
+    gemini_api_key: str = ""
     clerk_publishable_key: str = ""
     clerk_jwks_url: str = "https://api.clerk.com/v1/jwks"
 

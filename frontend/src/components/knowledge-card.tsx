@@ -12,39 +12,49 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { api } from "@/lib/api-client";
 
+import { ParsedItem } from "@/types";
+
 interface KnowledgeCardProps {
-  itemNumber: string | null;
+  item: ParsedItem | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 export function KnowledgeCard({
-  itemNumber,
+  item,
   open,
   onOpenChange,
 }: KnowledgeCardProps) {
-  const [data, setData] = useState<DSRItem | null>(null);
+  const [data, setData] = useState<DSRItem | (DSRItem & { is_ai_generated?: boolean }) | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    if (open && itemNumber) {
+    if (open && item) {
       const fetchData = async () => {
         setLoading(true);
         setError(false);
         try {
-          const response = await api.get(`/dsr/${encodeURIComponent(itemNumber)}`);
-          setData(response.data);
+          if (item.is_matched && item.dsr_item_number) {
+            const response = await api.get(`/dsr/${encodeURIComponent(item.dsr_item_number)}`);
+            setData(response.data);
+          } else {
+            const response = await api.post(`/ai/explain`, {
+              description: item.description,
+              item_number: item.item_number
+            });
+            setData(response.data);
+          }
         } catch (err) {
           setError(true);
-          console.error("Failed to load DSR item:", err);
+          console.error("Failed to load or generate item details:", err);
         } finally {
           setLoading(false);
         }
       };
       fetchData();
     }
-  }, [open, itemNumber]);
+  }, [open, item]);
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
@@ -70,13 +80,22 @@ export function KnowledgeCard({
           <>
             <DrawerHeader>
               <div className="flex items-center gap-2 mb-2">
-                <span className="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs font-semibold text-primary">
-                  DSR {data.item_number}
-                </span>
-                <span className="text-xs text-muted-foreground">{data.chapter}</span>
+                {data.item_number && (
+                  <span className="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs font-semibold text-primary">
+                    DSR {data.item_number}
+                  </span>
+                )}
+                {data.chapter && (
+                  <span className="text-xs text-muted-foreground">{data.chapter}</span>
+                )}
+                {data.is_ai_generated && (
+                  <span className="inline-flex items-center rounded-md bg-blue-500/10 px-2 py-1 text-xs font-semibold text-blue-500">
+                    ✨ AI Explained
+                  </span>
+                )}
               </div>
               <DrawerTitle className="text-2xl">
-                {data.simple_title || `DSR Item ${data.item_number}`}
+                {data.simple_title || (data.item_number ? `DSR Item ${data.item_number}` : "BOQ Item")}
               </DrawerTitle>
               <DrawerDescription className="mt-2 text-sm leading-relaxed text-foreground/80">
                 {data.official_description}
