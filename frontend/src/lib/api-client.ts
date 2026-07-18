@@ -16,11 +16,19 @@ export const api = axios.create({
 
 // Add auth token to requests (Clerk integration)
 api.interceptors.request.use(async (config) => {
-  // In production, get token from Clerk
-  // const token = await clerk.session?.getToken();
-  // if (token) config.headers.Authorization = `Bearer ${token}`;
-
-  // Dev mode: no token needed (backend returns dev user)
+  if (typeof window !== "undefined") {
+    const clerk = (window as any).Clerk;
+    if (clerk && clerk.session) {
+      try {
+        const token = await clerk.session.getToken();
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+      } catch (err) {
+        console.error("Failed to fetch Clerk token", err);
+      }
+    }
+  }
   return config;
 });
 

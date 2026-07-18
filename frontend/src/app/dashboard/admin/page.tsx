@@ -5,6 +5,8 @@ import { api } from "@/lib/api-client";
 import { DSRItemSummary } from "@/types";
 import { AddItemDialog } from "@/components/admin/add-item-dialog";
 
+import { EditItemDialog } from "@/components/admin/edit-item-dialog";
+
 export default function AdminDsrPage() {
   const [items, setItems] = useState<DSRItemSummary[]>([]);
   const [loading, setLoading] = useState(true);
@@ -85,9 +87,11 @@ export default function AdminDsrPage() {
                     )}
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <button className="text-muted-foreground hover:text-primary transition-colors text-sm font-medium">
-                      Edit
-                    </button>
+                    <EditItemDialog itemSummary={item} onSuccess={fetchItems}>
+                      <button className="text-muted-foreground hover:text-primary transition-colors text-sm font-medium">
+                        Edit
+                      </button>
+                    </EditItemDialog>
                   </td>
                 </tr>
               ))
