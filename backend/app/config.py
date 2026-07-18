@@ -36,7 +36,7 @@ class Settings(BaseSettings):
 
     # ─── Upload Limits ───
     max_upload_size_mb: int = 25
-    allowed_extensions: str = ".pdf,.xlsx,.csv"
+    allowed_extensions: str = ".pdf,.xlsx,.xls,.xlsm,.csv"
 
     # ─── Rate Limiting ───
     rate_limit_per_minute: int = 100

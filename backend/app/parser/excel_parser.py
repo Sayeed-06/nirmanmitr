@@ -22,26 +22,31 @@ class ExcelParser(BaseParser):
     """
 
     def supports(self, file_path: Path) -> bool:
-        return file_path.suffix.lower() in (".xlsx", ".xls")
+        return file_path.suffix.lower() in (".xlsx", ".xls", ".xlsm")
 
     def parse(self, file_path: Path) -> ParseResult:
         """Parse an Excel BOQ document."""
-        from openpyxl import load_workbook
+        import pandas as pd
+        import math
 
         result = ParseResult(source_file=str(file_path))
 
         try:
-            wb = load_workbook(str(file_path), read_only=True, data_only=True)
+            # pandas read_excel automatically picks xlrd for .xls and openpyxl for .xlsx
+            sheets = pd.read_excel(str(file_path), sheet_name=None, header=None)
+            
             rows: list[ParsedRow] = []
             order_idx = 0
 
-            for sheet_name in wb.sheetnames:
-                ws = wb[sheet_name]
+            for sheet_name, df in sheets.items():
                 col_mapping: dict[str, int] | None = None
 
-                for row_data in ws.iter_rows(values_only=True):
-                    # Convert to list, handle None values
-                    cells = list(row_data)
+                for _, row_series in df.iterrows():
+                    # Convert to list, replacing NaN with None
+                    cells = [
+                        None if isinstance(cell, float) and math.isnan(cell) else cell 
+                        for cell in row_series.tolist()
+                    ]
 
                     if all(cell is None for cell in cells):
                         continue
@@ -59,9 +64,8 @@ class ExcelParser(BaseParser):
                             rows.append(parsed)
                             order_idx += 1
 
-            wb.close()
             result.rows = rows
-            result.total_pages = len(wb.sheetnames)
+            result.total_pages = len(sheets)
             logger.info(
                 "excel_parse_complete",
                 file=file_path.name,
