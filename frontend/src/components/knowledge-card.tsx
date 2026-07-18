@@ -15,13 +15,15 @@ import { api } from "@/lib/api-client";
 import { ParsedItem } from "@/types";
 
 interface KnowledgeCardProps {
-  item: ParsedItem | null;
+  item?: ParsedItem | null;
+  itemNumber?: string | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 export function KnowledgeCard({
   item,
+  itemNumber,
   open,
   onOpenChange,
 }: KnowledgeCardProps) {
@@ -30,20 +32,25 @@ export function KnowledgeCard({
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    if (open && item) {
+    if (open && (item || itemNumber)) {
       const fetchData = async () => {
         setLoading(true);
         setError(false);
         try {
-          if (item.is_matched && item.dsr_item_number) {
-            const response = await api.get(`/dsr/${encodeURIComponent(item.dsr_item_number)}`);
+          if (itemNumber) {
+            const response = await api.get(`/dsr/${encodeURIComponent(itemNumber)}`);
             setData(response.data);
-          } else {
-            const response = await api.post(`/ai/explain`, {
-              description: item.description,
-              item_number: item.item_number
-            });
-            setData(response.data);
+          } else if (item) {
+            if (item.is_matched && item.dsr_item_number) {
+              const response = await api.get(`/dsr/${encodeURIComponent(item.dsr_item_number)}`);
+              setData(response.data);
+            } else {
+              const response = await api.post(`/ai/explain`, {
+                description: item.description,
+                item_number: item.item_number
+              });
+              setData(response.data);
+            }
           }
         } catch (err) {
           setError(true);
@@ -54,7 +61,7 @@ export function KnowledgeCard({
       };
       fetchData();
     }
-  }, [open, item]);
+  }, [open, item, itemNumber]);
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
